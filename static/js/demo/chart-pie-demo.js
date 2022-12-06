@@ -41,13 +41,18 @@ var myPieChart = new Chart(ctx, {
 
 
 for (i = 1; i < 23; i++) {
-  pieDropDown.push(document.getElementById("pie-" + String(i)));
+  if (i < 10) {
+    pieDropDown.push(document.getElementById("TPC-H-0" + String(i)));
+  } else {
+    pieDropDown.push(document.getElementById("TPC-H-" + String(i)));
+  }
 }
 for (i = 1; i < 23; i++) {
   console.log(pieDropDown[i - 1])
 }
 
 pieDropDown[0].onclick = function () {
+  console.log('pieDropDown0 click');
   myPieChart.destroy();
   var ctx = document.getElementById("myPieChart").getContext('2d');
   $.ajax({

@@ -14,7 +14,7 @@
                     <img src="/assets/logo_toggle.png" style="max-height: 3.0rem;">
                 </div>
                 <div class="sidebar-brand-text">
-                    Simulator
+                    OLAM
                 </div>
             </a>
 
@@ -186,13 +186,6 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Overview</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-                            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
-
                     <!-- Content Row -->
                     <div class="row">
 
@@ -296,7 +289,7 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 id="cpuUsageByQuery" class="m-0 font-weight-bold text-primary">Query Info (TPC-H
+                                    <h6 id="queryInfo" class="m-0 font-weight-bold text-primary">Query Info (TPC-H
                                         1)</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
@@ -332,10 +325,32 @@
                                     </div>
                                 </div>
                                 <!-- Card Body -->
-                                <div id="queryInfoContainer" class="card-body">
+                                <div class="row">
                                     <img id="queryInfoIMG" src="/static/img/tpch/TPC-H1.png"
-                                        style="max-height: 25.0rem;max-width: 32.5rem;">
+                                        style="max-height: 25.0rem;max-width: 32.5rem; padding: 1em;">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="dataTable" width="100%"
+                                                cellspacing="0">
+                                                <thead>
+                                                    <th>Total Snippet Count</th>
+                                                    <th id="totalSnippetCount"></th>
+                                                </thead>
+                                                <tbody id="snippetTableBody"></tbody>
+                                            </table>
+                                            <div align="right">
+                                                <a id="submitQuery" href="#" class="btn btn-primary btn-icon-split"
+                                                    style="align-content: right;">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                    </span>
+                                                    <span id="submitText" class="text">Submit Query</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -346,66 +361,13 @@
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                     <h6 id="SSDCSDUsage" class="m-0 font-weight-bold text-primary">Query Analyze</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Query</div>
-                                            <a id="pie-1" class="dropdown-item">TPC-H 01</a>
-                                            <a id="pie-2" class="dropdown-item">TPC-H 02</a>
-                                            <a id="pie-3" class="dropdown-item">TPC-H 03</a>
-                                            <a id="pie-4" class="dropdown-item">TPC-H 04</a>
-                                            <a id="pie-5" class="dropdown-item">TPC-H 05</a>
-                                            <a id="pie-6" class="dropdown-item">TPC-H 06</a>
-                                            <a id="pie-7" class="dropdown-item">TPC-H 07</a>
-                                            <a id="pie-8" class="dropdown-item">TPC-H 08</a>
-                                            <a id="pie-9" class="dropdown-item">TPC-H 09</a>
-                                            <a id="pie-10" class="dropdown-item">TPC-H 10</a>
-                                            <a id="pie-11" class="dropdown-item">TPC-H 11</a>
-                                            <a id="pie-12" class="dropdown-item">TPC-H 12</a>
-                                            <a id="pie-13" class="dropdown-item">TPC-H 13</a>
-                                            <a id="pie-14" class="dropdown-item">TPC-H 14</a>
-                                            <a id="pie-15" class="dropdown-item">TPC-H 15</a>
-                                            <a id="pie-16" class="dropdown-item">TPC-H 16</a>
-                                            <a id="pie-17" class="dropdown-item">TPC-H 17</a>
-                                            <a id="pie-18" class="dropdown-item">TPC-H 18</a>
-                                            <a id="pie-19" class="dropdown-item">TPC-H 19</a>
-                                            <a id="pie-20" class="dropdown-item">TPC-H 20</a>
-                                            <a id="pie-21" class="dropdown-item">TPC-H 21</a>
-                                            <a id="pie-22" class="dropdown-item">TPC-H 22</a>
-                                        </div>
-                                    </div>
+
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div id="pieChartContainer" class="chart-pie pt-4 pb-2">
 
                                         <canvas id="myPieChart"></canvas>
-                                        <canvas style="display: none;" id="tpch1-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch2-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch3-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch4-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch5-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch6-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch7-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch8-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch9-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch10-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch11-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch12-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch13-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch14-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch15-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch16-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch17-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch18-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch19-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch20-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch21-pie"></canvas>
-                                        <canvas style="display: none;" id="tpch22-pie"></canvas>
                                     </div>
                                     <div class="mt-4 text-center small">
                                         <span class="mr-2">
@@ -436,12 +398,49 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 id="cpuUsageByQuery" class="m-0 font-weight-bold text-primary">CSD Analyze</h6>
+
+                                    <h6 id="cpuUsageByQuery" class="m-0 font-weight-bold text-primary">CSD Analyze
+                                    </h6>
+                                    <div id="csdBetter" class="dropdown no-arrow" align="right" style="display: none;">
+                                        <a class="btn-sm btn-success btn-circle">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    </div>
+                                    <div id="csdWorse" class="dropdown no-arrow" align="right" style="display: none;">
+                                        <a class="btn-sm btn-warning btn-circle">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+
+                                    </div>
 
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
+
                                     <div class="chart-area">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="dataTable" width="100%"
+                                                cellspacing="0">
+                                                <thead>
+                                                    <th>Metric Names</th>
+                                                    <th>Value</th>
+                                                </thead>
+                                                <tbody id="csdResultTable"></tbody>
+                                            </table>
+                                        </div>
+
+                                        <div id="csdLoadingBar" style="display: none;">
+                                            <div class="spinner-border" role="status"
+                                                style=" position: absolute; top: 40%; left: 47%;">
+                                            </div>
+                                            <span class="visually-hidden"
+                                                style=" position: absolute; top: 50%; left: 45%;">Loading...</span>
+                                        </div>
+                                        <div id="csdWarningText" style="display: block;">
+                                            <span class="visually-hidden"
+                                                style=" position: absolute; top: 50%; left: 38%;">Please Select Query
+                                                First</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -453,12 +452,46 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 id="SSDCSDUsage" class="m-0 font-weight-bold text-primary">SSD Analyze</h6>
 
+                                    <h6 id="SSDCSDUsage" class="m-0 font-weight-bold text-primary">SSD Analyze</h6>
+                                    <div id="ssdBetter" class="dropdown no-arrow" align="right" style="display: none;">
+                                        <a class="btn-sm btn-success btn-circle">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    </div>
+                                    <div id="ssdWorse" class="dropdown no-arrow" align="right" style="display: none;">
+                                        <a class="btn-sm btn-warning btn-circle">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </a>
+                                    </div>
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
+
                                     <div class="chart-area">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="dataTable" width="100%"
+                                                cellspacing="0">
+                                                <thead>
+                                                    <th>Metric Names</th>
+                                                    <th>Value</th>
+                                                </thead>
+                                                <tbody id="ssdResultTable"></tbody>
+                                            </table>
+                                        </div>
+
+                                        <div id="ssdLoadingBar" style="display: none;">
+                                            <div class="spinner-border" role="status"
+                                                style=" position: absolute; top: 40%; left: 47%;">
+                                            </div>
+                                            <span class="visually-hidden"
+                                                style=" position: absolute; top: 50%; left: 45%;">Loading...</span>
+                                        </div>
+                                        <div id="ssdWarningText" style="display: block;">
+                                            <span class="visually-hidden"
+                                                style=" position: absolute; top: 50%; left: 38%;">Please Select Query
+                                                First</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -467,181 +500,169 @@
 
                     <!-- Content Row -->
                     <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-3 mb-4">
-                            <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Graph Maker</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="small font-weight-bold">Type </h4>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>CSD</code>
-                                        <a id="ssdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isSsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>SSD</code>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Type </h4>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 1</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 12</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 2</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 13</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 3</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 14</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 4</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 15</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 5</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 16</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 6</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 17</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 17</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 18</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 18</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 19</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 19</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 20</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 10</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 21</code>
-                                    </div>
-                                    <div class="mb-2">
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 11</code>
-                                        <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
-                                            <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
-                                                style="max-height: 2.5rem;">
-                                        </a>
-                                        <code>TPC-H 22</code>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                        </div>
-
-                        <div class="col-lg-9 mb-4">
+                        <div class="col-lg-12 mb-4">
 
                             <!-- Illustrations -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">PushDown History</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Metric Graph</h6>
                                 </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 63.5rem;"
-                                            src="/static/img/chartExample.PNG" alt="...">
+                                <div class="row">
+                                    <div class="card-body col-lg-3 mb-4">
+                                        <h4 class="small font-weight-bold">Type </h4>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>CSD</code>
+                                            <a id="ssdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isSsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>SSD</code>
+                                        </div>
+                                        <h4 class="small font-weight-bold">Type </h4>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 1</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 12</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 2</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 13</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 3</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 14</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 4</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 15</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 5</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 16</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 6</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 17</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 17</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 18</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 18</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 19</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 19</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 20</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 10</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 21</code>
+                                        </div>
+                                        <div class="mb-2">
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 11</code>
+                                            <a id="csdCheckBox" class="btn btn-success btn-circle btn-sm">
+                                                <img id="isCsdCheck" src="/static/img/checkCircle2.PNG"
+                                                    style="max-height: 2.5rem;">
+                                            </a>
+                                            <code>TPC-H 22</code>
+                                        </div>
                                     </div>
+                                    <div class="card-body col-lg-9">
+                                        <div class="text-center">
+                                            <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 63.5rem;"
+                                                src="/static/img/chartExample.PNG" alt="...">
+                                        </div>
 
+                                    </div>
                                 </div>
                             </div>
 

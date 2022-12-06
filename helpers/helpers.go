@@ -1,11 +1,16 @@
 package helpers
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"gin_session_auth/globals"
 	"gin_session_auth/models"
+	"io/ioutil"
 	"math"
 	"math/rand"
+	"net/http"
 	"strings"
 	"time"
 
@@ -143,44 +148,134 @@ func GetTPCHChartData(username string, queryNumber string) *models.TPCHChart {
 
 func GetSSDCSDChartData(username string, queryNumber string) *models.TPCHChart {
 	client := globals.ConnectDB()
-	taskCollection := globals.GetCollection(client, "tasks")
+	analyzeCollection := globals.GetCollection(client, "analyze")
+
+	aStruct := &models.Analyze{}
+	queryName := "TPC-H" + queryNumber
+	err := analyzeCollection.FindOne(context.Background(), bson.M{"queryname": queryName}).Decode(aStruct)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	sumData := aStruct.Aggregation + aStruct.Join + aStruct.SubQuery + aStruct.GroupBy + aStruct.OrderBy
+	tmpData := &models.AnalyzeResp{
+		QueryName:   aStruct.QueryName,
+		Aggregation: float32(aStruct.Aggregation) / float32(sumData) * 100,
+		Join:        float32(aStruct.Join) / float32(sumData) * 100,
+		SubQuery:    float32(aStruct.SubQuery) / float32(sumData) * 100,
+		GroupBy:     float32(aStruct.GroupBy) / float32(sumData) * 100,
+		OrderBy:     float32(aStruct.OrderBy) / float32(sumData) * 100,
+	}
 	responseData := &models.TPCHChart{
-		Labels: make([]string, 2),
-		Datas:  make([]float32, 2),
+		Labels: []string{"Aggregation", "Join", "SubQuery", "GroupBy", "OrderBy"},
+		Datas:  []float32{toFixed(tmpData.Aggregation, 2), toFixed(tmpData.Join, 2), toFixed(tmpData.SubQuery, 2), toFixed(tmpData.GroupBy, 2), toFixed(tmpData.OrderBy, 2)},
 	}
-	var ssdStructs []models.Task
-	var csdStructs []models.Task
-	queryName := "TPC-H_" + queryNumber
-	ssdCursor, err := taskCollection.Find(context.Background(), bson.M{"id": username, "query": queryName, "type": "SSD"})
-	if err != nil {
-		klog.Fatalln(err)
-	}
-	csdCursor, err := taskCollection.Find(context.Background(), bson.M{"id": username, "query": queryName, "type": "ENGINE"})
-	if err != nil {
-		klog.Fatalln(err)
-	}
-	if err = ssdCursor.All(context.Background(), &ssdStructs); err != nil {
-		klog.Fatalln(err)
-	}
-	if err = csdCursor.All(context.Background(), &csdStructs); err != nil {
-		klog.Fatalln(err)
-	}
-	ssdCount := 0
-	if len(ssdStructs) == 0 || len(csdStructs) == 0 {
-		return responseData
-	}
-	for _, task := range ssdStructs {
-		responseData.Datas[0] = responseData.Datas[0] + task.CPU
-		ssdCount++
-	}
-	responseData.Labels[0] = "SSD"
-	responseData.Datas[0] = responseData.Datas[0] / float32(ssdCount)
-	csdCount := 0
-	for _, task := range csdStructs {
-		responseData.Datas[1] = responseData.Datas[1] + task.CPU
-		csdCount++
-	}
-	responseData.Labels[1] = "CSD"
-	responseData.Datas[1] = responseData.Datas[1] / float32(csdCount)
+
 	return responseData
+}
+
+func GetSpecificSnippet(username string, queryNumber string) *models.Table {
+	client := globals.ConnectDB()
+	queryCollection := globals.GetCollection(client, "query")
+	responseData := &models.Table{}
+	queryName := "TPC-H" + queryNumber
+	err := queryCollection.FindOne(context.Background(), bson.M{"queryname": queryName}).Decode(responseData)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	return responseData
+}
+
+func QueryRun(username string, queryNumber string) *models.MetricData {
+	queryName := "TPC-H_" + queryNumber
+	ssdReq := &models.CollectorReq{
+		UserId:    username,
+		QueryType: 1,
+		Query:     queryName,
+	}
+	csdReq := &models.CollectorReq{
+		UserId:    username,
+		QueryType: 2,
+		Query:     queryName,
+	}
+
+	ssdChan := make(chan models.Metric)
+	csdChan := make(chan models.Metric)
+	go collectRequest(csdReq, csdChan)
+	go collectRequest(ssdReq, ssdChan)
+
+	result := &models.MetricData{}
+	for i := 0; i < 2; i++ {
+		select {
+		case ssdMetric, open := <-ssdChan:
+			if !open {
+				klog.Errorln("Update channel is closed, exiting the sync loop")
+			}
+			result.SSDMetric = ssdMetric
+			result.SSDMetric.CPU = toFixed(result.SSDMetric.CPU, 3)
+			result.SSDMetric.Time = toFixed(result.SSDMetric.Time, 3)
+			if result.SSDMetric.NetworkRx <= 0 {
+				result.SSDMetric.NetworkRx = 0.001
+			}
+			if result.SSDMetric.NetworkTx <= 0 {
+				result.SSDMetric.NetworkTx = 0.001
+			}
+			if result.SSDMetric.Memory <= 0 {
+				result.SSDMetric.Memory = 0.001
+			}
+		case csdMetric, open := <-csdChan:
+			if !open {
+				klog.Errorln("Update channel is closed, exiting the sync loop")
+			}
+
+			result.CSDMetric = csdMetric
+			result.CSDMetric.CPU = toFixed(result.CSDMetric.CPU, 3)
+			result.CSDMetric.Time = toFixed(result.CSDMetric.Time, 3)
+			if result.CSDMetric.NetworkRx <= 0 {
+				result.SSDMetric.NetworkRx = 0.001
+			}
+			if result.CSDMetric.NetworkTx <= 0 {
+				result.SSDMetric.NetworkTx = 0.001
+			}
+			if result.CSDMetric.Memory <= 0 {
+				result.SSDMetric.Memory = 0.001
+			}
+		}
+	}
+
+	return result
+}
+
+func collectRequest(req *models.CollectorReq, hashCodeChan chan models.Metric) {
+	reqByte, err := json.Marshal(req)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	reqBody := bytes.NewBuffer(reqByte)
+	httpReq, err := http.NewRequest("GET", "http://10.0.5.123:30950/query", reqBody)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	httpReq.Header.Add("Content-Type", "application/json")
+	client := &http.Client{}
+	resp, err := client.Do(httpReq)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	defer resp.Body.Close()
+
+	// Response 체크.
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		klog.Errorln(err)
+	}
+
+	fmt.Println(string(respBody))
+
+	colResp := &models.Metric{}
+
+	err = json.Unmarshal(respBody, colResp)
+	if err != nil {
+		klog.Errorln(err)
+	}
+	hashCodeChan <- *colResp
 }

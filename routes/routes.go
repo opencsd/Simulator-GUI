@@ -17,7 +17,9 @@ func PublicRoutes(g *gin.RouterGroup) {
 
 func PrivateRoutes(g *gin.RouterGroup) {
 	g.GET("/tpchChart", controllers.CPUUsageChart())
+	g.GET("/runquery", controllers.CollectMetric())
 	g.GET("/ssdcsd", controllers.SSDCSDChart())
+	g.GET("/table", controllers.TableInfo())
 	g.GET("/dashboard", controllers.DashboardHandler())
 	g.GET("/logout", controllers.UserLogout())
 
