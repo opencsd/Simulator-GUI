@@ -10,5 +10,5 @@ jobs:
     - name: pullAll
       run: |
           git fetch --all
-          git reset --hard main
-          git pull main
+          git reset --hard origin/main
+          git pull origin main
