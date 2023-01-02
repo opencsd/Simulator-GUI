@@ -6,7 +6,6 @@ Chart.defaults.global.defaultFontColor = '#858796';
 var pieChart = document.getElementById("myPieChart");
 var pieDropDown = [];
 var ctx = pieChart.getContext('2d');
-console.log(pieChart.width, pieChart.height);
 
 var myPieChart = new Chart(ctx, {
   type: 'doughnut',
@@ -47,10 +46,6 @@ for (i = 1; i < 23; i++) {
     pieDropDown.push(document.getElementById("TPC-H-" + String(i)));
   }
 }
-for (i = 1; i < 23; i++) {
-  console.log(pieDropDown[i - 1])
-}
-
 pieDropDown[0].onclick = function () {
   console.log('pieDropDown0 click');
   myPieChart.destroy();

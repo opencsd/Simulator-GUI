@@ -55,3 +55,14 @@ func CollectMetric() gin.HandlerFunc {
 		c.JSON(200, respData)
 	}
 }
+
+func MetricGraph() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		paramMap := c.Request.URL.Query()
+		startTime := paramMap["startTime"][0]
+		endTime := paramMap["endTime"][0]
+		respData := helpers.GraphGet(startTime, endTime)
+
+		c.JSON(200, respData)
+	}
+}

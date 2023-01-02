@@ -22,5 +22,6 @@ func PrivateRoutes(g *gin.RouterGroup) {
 	g.GET("/table", controllers.TableInfo())
 	g.GET("/dashboard", controllers.DashboardHandler())
 	g.GET("/logout", controllers.UserLogout())
+	g.GET("/metricGraph", controllers.MetricGraph())
 
 }

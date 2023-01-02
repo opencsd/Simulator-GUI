@@ -279,3 +279,122 @@ func collectRequest(req *models.CollectorReq, hashCodeChan chan models.Metric) {
 	}
 	hashCodeChan <- *colResp
 }
+
+func GraphGet(startTime string, endTime string) *models.GraphDataAll {
+	client := globals.ConnectDB()
+	taskCollection := globals.GetCollection(client, "livemonitoring")
+	responseData := &models.GraphDataAll{
+		SSD: models.GraphData{
+			CPU:     make([]float32, 0),
+			Memory:  make([]float32, 0),
+			Network: make([]float32, 0),
+		},
+		CSD: models.GraphData{
+			CPU:     make([]float32, 0),
+			Memory:  make([]float32, 0),
+			Network: make([]float32, 0),
+		},
+		Label: make([]string, 0),
+	}
+	monitoringStructs := make([]models.MonitoringTask, 0)
+	layoutISO := "01/02/2006 3:04 PM"
+	t1, err := time.Parse(layoutISO, startTime) //converted to ISODate format
+	if err != nil {
+		klog.Fatalln(err)
+	}
+	t2, err := time.Parse(layoutISO, endTime) //converted to ISODate format
+	if err != nil {
+		klog.Fatalln(err)
+	}
+
+	timeTick := time.Second * 10
+	timeDiff := t2.Sub(t1)
+	klog.Infoln("Time Diff = ", timeDiff)
+	if timeDiff.Hours() > (24 * 7) {
+		timeTick = time.Hour * 24
+	} else if timeDiff.Hours() > 24 {
+		timeTick = time.Hour * 4
+	} else if timeDiff.Hours() > 10 {
+		timeTick = time.Hour * 2
+	} else if timeDiff.Hours() > 1 {
+		timeTick = time.Hour
+	} else if timeDiff.Minutes() > 30 {
+		timeTick = time.Minute * 10
+	} else if timeDiff.Minutes() > 10 {
+		timeTick = time.Minute * 5
+	} else if timeDiff.Minutes() > 1 {
+		timeTick = time.Minute
+	} else {
+		timeTick = time.Second * 10
+	}
+	filterCursor, err := taskCollection.Find(context.Background(), bson.M{"starttime": bson.M{"$gt": t1, "$lt": t2}})
+	if err != nil {
+		klog.Fatalln(err)
+	}
+	if err = filterCursor.All(context.Background(), &monitoringStructs); err != nil {
+		klog.Fatalln(err)
+	}
+
+	ssdLastTime := time.Time{}
+	csdLastTime := time.Time{}
+	forCompare := time.Time{}
+	klog.Infoln("Time Tick = ", timeTick)
+	for i, task := range monitoringStructs {
+
+		if task.Type == "SSD" {
+			if ssdLastTime == forCompare {
+				ssdLastTime = task.StartTime
+			} else {
+				if task.StartTime.Sub(ssdLastTime) < timeTick {
+					continue
+				} else {
+					ssdLastTime = task.StartTime
+				}
+			}
+		} else {
+			continue
+		}
+
+		klog.Infoln("Format Time")
+		responseData.Label = append(responseData.Label, task.StartTime.Format("01-02 15:04:05"))
+		if task.CPU <= 0 {
+			monitoringStructs[i].CPU = 0
+		}
+		monitoringStructs[i].NetworkRx = monitoringStructs[i].NetworkRx * 0.00000000001
+		monitoringStructs[i].Memory = monitoringStructs[i].Memory * 0.00000000001
+		monitoringStructs[i].NetworkTx = monitoringStructs[i].NetworkTx * 0.00000000001
+		responseData.SSD.CPU = append(responseData.SSD.CPU, monitoringStructs[i].CPU)
+		responseData.SSD.Memory = append(responseData.SSD.Memory, monitoringStructs[i].Memory)
+		responseData.SSD.Network = append(responseData.SSD.Network, (monitoringStructs[i].NetworkRx + monitoringStructs[i].NetworkTx))
+	}
+	for i, task := range monitoringStructs {
+
+		if task.Type == "SSD" {
+			continue
+		} else {
+			if csdLastTime == forCompare {
+				csdLastTime = task.StartTime
+			} else {
+				if task.StartTime.Sub(csdLastTime) < timeTick {
+					continue
+				} else {
+					csdLastTime = task.StartTime
+				}
+			}
+		}
+
+		klog.Infoln("Format Time")
+		if task.CPU <= 0 {
+			monitoringStructs[i].CPU = 0
+		}
+		monitoringStructs[i].NetworkRx = monitoringStructs[i].NetworkRx * 0.00000000001
+		monitoringStructs[i].Memory = monitoringStructs[i].Memory * 0.00000000001
+		monitoringStructs[i].NetworkTx = monitoringStructs[i].NetworkTx * 0.00000000001
+
+		responseData.CSD.CPU = append(responseData.CSD.CPU, monitoringStructs[i].CPU)
+		responseData.CSD.Memory = append(responseData.CSD.Memory, monitoringStructs[i].Memory)
+		responseData.CSD.Network = append(responseData.CSD.Network, (monitoringStructs[i].NetworkRx + monitoringStructs[i].NetworkTx))
+	}
+	klog.Infoln(responseData)
+	return responseData
+}

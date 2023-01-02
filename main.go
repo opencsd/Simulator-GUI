@@ -24,6 +24,11 @@ func main() {
 	router.Static("/static/scss", "./static/scss")
 	router.Static("/vendor", "./static/vendor")
 	router.Static("/static/js", "./static/js")
+	router.Static("/bower_components/moment/min", "./bower_components/moment/min")
+	router.Static("/bower_components/eonasdan-bootstrap-datetimepicker/build/js", "./bower_components/eonasdan-bootstrap-datetimepicker/build/js")
+	router.Static("/bower_components/bootstrap/dist/css", "./bower_components/bootstrap/dist/css")
+	router.Static("/bower_components/eonasdan-bootstrap-datetimepicker/build/css", "./bower_components/eonasdan-bootstrap-datetimepicker/build/css")
+
 	router.LoadHTMLGlob("templates/*.html")
 
 	router.Use(sessions.Sessions("session", cookie.NewStore(globals.Secret)))
